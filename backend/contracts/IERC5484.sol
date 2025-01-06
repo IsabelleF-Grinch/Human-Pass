@@ -33,12 +33,10 @@ interface IERC5484 {
     /**
      * @dev Function to issue an SBT 
      * @param to Address of the recipient of the SBT
-     * @param tokenId Unique identifier of the SBT
      * @param burnAuth Authorization level for revoking the SBT
      */
     function mint(
         address to,
-        uint256 tokenId,
         BurnAuth burnAuth
     ) external;
 

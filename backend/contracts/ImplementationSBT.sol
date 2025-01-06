@@ -12,6 +12,9 @@ import "./IERC5484.sol";
 /// @dev The contract is upgradeable using the Initializable pattern and includes role-based access control.
 contract ImplementationSBT is Initializable, AccessControlEnumerable, IERC5484, ERC721 {
 
+    /// @notice Counter for generating unique token IDs.
+    uint256 private _tokenIdCounter;
+
     /// @notice Role for accounts that can mint SBTs.
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -52,6 +55,8 @@ contract ImplementationSBT is Initializable, AccessControlEnumerable, IERC5484, 
         _grantRole(ADMIN_ROLE, _admin);
         _grantRole(MINTER_ROLE, _user);
         _grantRole(BURNER_ROLE, _user);
+
+        _tokenIdCounter = 1;
     }
 
     /// @notice Transfers the admin role to a new address.
@@ -75,18 +80,21 @@ contract ImplementationSBT is Initializable, AccessControlEnumerable, IERC5484, 
 
     /// @notice Mints a new SBT.
     /// @param to Address of the minter (must be the same as `msg.sender`).
-    /// @param tokenId ID of the token to be minted.
     /// @param burnAuth_ Burn authorization type for the token.
     function mint(
         address to,
-        uint256 tokenId,
         BurnAuth burnAuth_
     ) external override onlyRole(MINTER_ROLE) {
+        uint256 tokenId = _tokenIdCounter;
+
         require(_ownerOf(tokenId) == address(0), "Token already exists");
         require(to == msg.sender, "Minter must mint for themselves");
         require(to != address(0), "Cannot mint to zero address");
 
-        _mint(to, tokenId);
+
+        _safeMint(to, tokenId);
+        _tokenIdCounter += 1;
+
         _burnAuths[tokenId] = burnAuth_;
         _issuedAt[tokenId] = block.timestamp;
         addressToTokenId[to] = tokenId;

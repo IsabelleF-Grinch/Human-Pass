@@ -61,8 +61,9 @@ describe("Human Pass", function () {
       const { masterContract, addr1, owner } = await loadFixture(deployFixture);
       await masterContract.initialize(owner.address, addr1.address);
 
-      const tokenId = 1;
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 1); // BurnAuth.IssuerOnly
+      await masterContract.connect(addr1).mint(addr1.address, 1); // BurnAuth.IssuerOnly
+
+      const tokenId = await masterContract.getTokenIdByAddress(addr1.address);
 
       expect(await masterContract.ownerOf(tokenId)).to.equal(addr1.address);
       expect(await masterContract.getTokenIdByAddress(addr1.address)).to.equal(tokenId);
@@ -72,14 +73,14 @@ describe("Human Pass", function () {
       const { masterContract, addr1, owner } = await loadFixture(deployFixture);
       await masterContract.initialize(owner.address, addr1.address);
 
-      await expect(masterContract.connect(owner).mint(owner.address, 2, 1)).to.be.reverted;
+      await expect(masterContract.connect(owner).mint(owner.address, 1)).to.be.reverted;
     });
 
     it("Should revert if minter tries to mint for someone else", async function () {
       const { masterContract, addr1, owner } = await loadFixture(deployFixture);
       await masterContract.initialize(owner.address, addr1.address);
 
-      await expect(masterContract.connect(addr1).mint(addr2.address, 3, 1)).to.be.revertedWith("Minter must mint for themselves");
+      await expect(masterContract.connect(addr1).mint(addr2.address, 1)).to.be.revertedWith("Minter must mint for themselves");
     });
   });
 
@@ -89,25 +90,24 @@ describe("Human Pass", function () {
 
       await masterContract.initialize(owner.address, addr1.address);
 
-      const tokenId = 1;
 
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 2); // BurnAuth.Both
+      await masterContract.connect(addr1).mint(addr1.address, 2); // BurnAuth.Both
+      const tokenId1 = await masterContract.getTokenIdByAddress(addr1.address);
+      await expect(masterContract.connect(addr1).burn(tokenId1)).to.not.be.reverted;
 
-      await expect(masterContract.connect(addr1).burn(tokenId)).to.not.be.reverted;
+      await masterContract.connect(addr1).mint(addr1.address, 2); // Remint avec Both
+      const tokenId2 = await masterContract.getTokenIdByAddress(addr1.address);
+      await expect(masterContract.connect(owner).burn(tokenId2)).to.not.be.reverted;
 
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 2); // Remint avec Both
-
-      await expect(masterContract.connect(owner).burn(tokenId)).to.not.be.reverted;
-
-      await expect(masterContract.ownerOf(tokenId)).to.be.reverted;
+      await expect(masterContract.ownerOf(tokenId2)).to.be.reverted;
     });
 
     it("Should revert if unauthorized user tries to burn", async function () {
       const { masterContract, addr1, addr2 } = await loadFixture(deployFixture);
       await masterContract.initialize(addr1.address, addr1.address);
 
-      const tokenId = 3;
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 1); // BurnAuth.IssuerOnly
+      await masterContract.connect(addr1).mint(addr1.address, 1); // BurnAuth.IssuerOnly
+      const tokenId = await masterContract.getTokenIdByAddress(addr1.address);
 
       await expect(masterContract.connect(addr2).burn(tokenId)).to.be.revertedWith("Access denied: must have ADMIN or BURNER role");
     });
@@ -116,8 +116,9 @@ describe("Human Pass", function () {
       const { masterContract, addr1 } = await loadFixture(deployFixture);
       await masterContract.initialize(addr1.address, addr1.address);
 
-      const tokenId = 4;
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 3); // BurnAuth.Neither
+
+      await masterContract.connect(addr1).mint(addr1.address, 3); // BurnAuth.Neither
+      const tokenId = await masterContract.getTokenIdByAddress(addr1.address);
 
       await expect(masterContract.connect(addr1).burn(tokenId)).to.be.revertedWith("Burning is not allowed for this token");
     });
@@ -146,8 +147,8 @@ describe("Human Pass", function () {
       const { masterContract, addr1, addr2 } = await loadFixture(deployFixture);
       await masterContract.initialize(addr1.address, addr1.address);
 
-      const tokenId = 5;
-      await masterContract.connect(addr1).mint(addr1.address, tokenId, 1);
+      await masterContract.connect(addr1).mint(addr1.address, 1);
+      const tokenId = await masterContract.getTokenIdByAddress(addr1.address);
 
       await expect(masterContract.connect(addr1).transferFrom(addr1.address, addr2.address, tokenId)).to.be.revertedWith("SBT: transfer not allowed");
     });

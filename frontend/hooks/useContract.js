@@ -50,6 +50,21 @@ export const useContract = () => {
     }
   };
 
+  //MINT
+  const MintSBT = async () => {
+    try {
+      writeContract({
+        address: factoryAddress,
+        abi: factoryAbi,
+        functionName: "implementation.mint",
+        args: [userAddress, 2], //to, burnAuth_
+      });
+    } catch (error) {
+      console.error("Transaction Error:", error);
+      alert("Failed to send transaction: ", error.message);
+    }
+  };
+
   useEffect(() => {
     if (!deployer !== undefined) {
       console.log(deployer);
