@@ -1,6 +1,6 @@
-# Sample Hardhat Project
+# Human Pass Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+Human Pass is a **Soulbound Token (SBT)** project based on the ERC721 and ERC5484 standards, designed to provide a decentralized proof of humanity. It uses **minimal proxies** via a factory to create individual SBT instances for each user.
 
 Try running some of the following tasks:
 
@@ -9,5 +9,10 @@ npx hardhat help
 npx hardhat test
 REPORT_GAS=true npx hardhat test
 npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+```
+
+Deploy on localhost
+
+```shell
+npx hardhat ignition deploy ignition/modules/deploy.ts --network localhost
 ```
