@@ -65,7 +65,7 @@ contract ImplementationSBT is Initializable, AccessControlEnumerable, IERC5484, 
 
         renounceRole(ADMIN_ROLE, currentAdmin);
         require(getRoleMemberCount(ADMIN_ROLE) == 0, "Admin renounce failed");
-        grantRole(ADMIN_ROLE, newAdmin);
+        _grantRole(ADMIN_ROLE, newAdmin);
     }
 
     /// @notice Prevents transfer of Soulbound Tokens (SBT).
