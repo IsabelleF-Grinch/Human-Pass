@@ -5,26 +5,34 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract SBTMinimalProxyFactory {
     address public implementation;
-    address[] public clonesList;
+    address public deployer;
+
+    mapping(address => address) public userClone; 
 
     event CloneCreated(address indexed clone);
 
     constructor(address _implementation){
         implementation = _implementation;
+        deployer = msg.sender;
     }
 
     function createNewClone() external returns (address newInstance) {
+
+        require(userClone[msg.sender] == address(0), "You already have instantiated a clone");
+
         newInstance = Clones.clone(implementation);
         (bool success, ) = newInstance.call(
-            abi.encodeWithSignature("initialize(address)", msg.sender)
+            abi.encodeWithSignature(
+                "initialize(address,address)",
+                deployer,  
+                msg.sender 
+            )
         );
         require(success, "Proxy initialization failed");
+      
+        userClone[msg.sender] = newInstance;
 
-        clonesList.push(newInstance);
         emit CloneCreated(newInstance);
     }
 
-    function getClones() external view returns (address[] memory) {
-        return clonesList;
-    }
 }
