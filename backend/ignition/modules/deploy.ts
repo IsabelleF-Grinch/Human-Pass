@@ -9,7 +9,7 @@ const ADDRESS_ADMIN = process.env.ADDRESS_ADMIN;
 const SBTDeploymentModule = buildModule("SBTDeploymentModule", (m) => {
   const addressAdmin = m.getParameter("addressAdmin", ADDRESS_ADMIN);
 
-  const implementationSBT = m.contract("ImplementationSBT", [addressAdmin]);
+  const implementationSBT = m.contract("ImplementationSBT");
 
   const sbtMinimalProxyFactory = m.contract("SBTMinimalProxyFactory", [
     implementationSBT,
