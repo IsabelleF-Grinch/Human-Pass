@@ -5,11 +5,15 @@ import styles from "./page.module.css";
 import { useContract } from "@/hooks/useContract";
 
 export default function Home() {
-  const { userRole, isTxConfirming, isTxConfirmed, createClone } =
+  const { userRole, isTxConfirming, isTxConfirmed, createClone, mintSBT } =
     useContract();
 
   const handleClick = () => {
     createClone();
+  };
+
+  const handleMint = () => {
+    mintSBT();
   };
 
   return (
@@ -34,7 +38,12 @@ export default function Home() {
                 <button onClick={handleClick}>Obtenir</button>
               </>
             )}
-            {isTxConfirmed && <p>mainteant il faut mint</p>}
+            {isTxConfirmed && (
+              <>
+                <p>Mainteant il faut mint</p>
+                <button onClick={handleMint}>Minter</button>
+              </>
+            )}
             {isTxConfirming && <p>...isCloning</p>}
           </>
         )}

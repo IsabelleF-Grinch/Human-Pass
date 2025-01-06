@@ -1,5 +1,5 @@
 "use client";
-import { factoryAbi, factoryAddress } from "@/constants";
+import { factoryAbi, factoryAddress, implementationAbi } from "@/constants";
 import { useEffect } from "react";
 import {
   useAccount,
@@ -36,6 +36,17 @@ export const useContract = () => {
     functionName: "deployer",
   });
 
+  const {
+    data: userCloneAddress,
+    isError: cloneError,
+    isLoading: cloneLoading,
+  } = useReadContract({
+    address: factoryAddress,
+    abi: factoryAbi,
+    functionName: "userClone",
+    args: [userAddress],
+  });
+
   //CREATE CLONE
   const createClone = async () => {
     try {
@@ -51,12 +62,22 @@ export const useContract = () => {
   };
 
   //MINT
-  const MintSBT = async () => {
+  const mintSBT = async () => {
+    console.log(!userCloneAddress);
+    console.log(userCloneAddress);
+    if (
+      !userCloneAddress ||
+      userCloneAddress === "0x0000000000000000000000000000000000000000"
+    ) {
+      alert("Aucun clone trouvé pour cet utilisateur !");
+      return;
+    }
+
     try {
       writeContract({
-        address: factoryAddress,
-        abi: factoryAbi,
-        functionName: "implementation.mint",
+        address: userCloneAddress,
+        abi: implementationAbi,
+        functionName: "mint",
         args: [userAddress, 2], //to, burnAuth_
       });
     } catch (error) {
@@ -80,6 +101,7 @@ export const useContract = () => {
     }
     if (txError) {
       alert("Tx is failed 🥴!", `Error content txError: ${txError?.message}`);
+      console.log(txError?.message);
     }
     if (receiptError) {
       alert(
@@ -102,5 +124,6 @@ export const useContract = () => {
     isTxConfirming,
     isTxConfirmed,
     createClone,
+    mintSBT,
   };
 };
