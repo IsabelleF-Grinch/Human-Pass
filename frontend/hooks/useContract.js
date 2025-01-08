@@ -87,12 +87,6 @@ export const useContract = () => {
   };
 
   useEffect(() => {
-    if (!deployer !== undefined) {
-      console.log(deployer);
-    }
-  }, [deployer]);
-
-  useEffect(() => {
     if (isPending) {
       alert("Tx is pending... 🫣");
     }

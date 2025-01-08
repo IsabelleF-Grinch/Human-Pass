@@ -5,22 +5,22 @@ import styles from "./page.module.css";
 import { useContract } from "@/hooks/useContract";
 
 export default function Home() {
-  const { userRole, isTxConfirming, isTxConfirmed, createClone, mintSBT } =
-    useContract();
+  // const { userRole, isTxConfirming, isTxConfirmed, createClone, mintSBT } =
+  //   useContract();
 
-  const handleClick = () => {
-    createClone();
-  };
+  // const handleClick = () => {
+  //   createClone();
+  // };
 
-  const handleMint = () => {
-    mintSBT();
-  };
+  // const handleMint = () => {
+  //   mintSBT();
+  // };
 
   return (
     <div className={styles.page}>
       <Header />
 
-      <main className={styles.main}>
+      {/* <main className={styles.main}>
         {userRole == "admin" && (
           <>
             <p>
@@ -47,7 +47,7 @@ export default function Home() {
             {isTxConfirming && <p>...isCloning</p>}
           </>
         )}
-      </main>
+      </main> */}
       <footer className={styles.footer}>Human Pass</footer>
     </div>
   );

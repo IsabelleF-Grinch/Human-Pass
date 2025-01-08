@@ -7,7 +7,7 @@ import { WagmiProvider } from "wagmi";
 import { hardhat, sepolia } from "wagmi/chains";
 
 const config = getDefaultConfig({
-  appName: "Project 3 Voting Dapp",
+  appName: "Human Pass",
   projectId: "6f3e5e5d1f7945d1429de9b78246a8e1",
   chains: [hardhat, sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)
